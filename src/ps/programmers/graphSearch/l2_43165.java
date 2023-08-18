@@ -1,4 +1,4 @@
-package programmers.graphSearch;
+package ps.programmers.graphSearch;
 
 public class l2_43165 {
     public static int tar;
