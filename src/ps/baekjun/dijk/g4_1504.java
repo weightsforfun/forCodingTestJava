@@ -4,26 +4,36 @@ import java.util.*;
 import java.io.*;
 
 public class g4_1504 {
-    public static int[] distance;
+    public static List<List<Node>> arr;
     public static int[] visited;
+    public static int[] distance;
 
-    public static int[][] arr;
-    public static int n;
+    public static int INF=2000000; 
+    public static class Node{
+        int cost,des;
+        Node(int cost,int des){
+            this.cost=cost;
+            this.des=des;
+        }
+        public int getCost(){
+            return cost;
+        }
+    }
     public static void main(String[] args) throws IOException {
-        BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st;
-        int e;
         st=new StringTokenizer(br.readLine());
+
+        int n,e;
+
         n=Integer.parseInt(st.nextToken());
         e=Integer.parseInt(st.nextToken());
-
-        arr=new int[n+1][n+1];
-
-        for(int [] row:arr){
-            for(int item:row){
-                item=Integer.MAX_VALUE;
-            }
+        visited=new int[n+1];
+        distance = new int[n+1];
+        arr = new ArrayList<>();
+        for(int i=0;i<n+1;i++) {
+            arr.add(new ArrayList<Node>());
         }
 
         for(int i=0;i<e;i++){
@@ -31,67 +41,54 @@ public class g4_1504 {
             int start=Integer.parseInt(st.nextToken());
             int end=Integer.parseInt(st.nextToken());
             int value=Integer.parseInt(st.nextToken());
-            arr[start][end]=value;
-        }
 
-        int des1;
-        int des2;
+            arr.get(start).add(new Node(value,end));
+            arr.get(end).add(new Node(value,start));
+        }
 
         st=new StringTokenizer(br.readLine());
-        des1=Integer.parseInt(st.nextToken());
-        des2=Integer.parseInt(st.nextToken());
 
-        int res1=0;
-        res1+=dijk(1,des1);
-        res1+=dijk(des1,des2);
-        res1+=dijk(des2,n);
+        int v1=Integer.parseInt(st.nextToken());
+        int v2=Integer.parseInt(st.nextToken());
 
-        int res2=0;
-        res2+=dijk(1,des2);
-        res2+=dijk(des2,des1);
-        res2+=dijk(des1,n);
+        int case1=0;
+        case1=dijk(1,v1)+dijk(v1,v2)+dijk(v2,n);
+        int case2=0;
+        case2=dijk(1,v2)+dijk(v2,v1)+dijk(v1,n);
 
-        System.out.println(Math.min(res1,res2));
+        if(case1>=INF && case2>=INF){
+            System.out.print(-1);
+        }
+        else{
+            System.out.print(Math.min(case1,case2));
+        }
+
+
+
 
     }
+
     public static int dijk(int start, int end){
-
-        for(int[] row:arr){
-            for(int item:row){
-                item=Integer.MAX_VALUE;
-            }
-        }
         Arrays.fill(visited,0);
-        Arrays.fill(distance,Integer.MAX_VALUE);
-        visited[0]=1;
-        visited[1]=1;
+        Arrays.fill(distance,INF);
         distance[start]=0;
-        PriorityQueue<Integer[]> pq=new PriorityQueue<>((item1,item2)-> item1[0]>item2[0] ? 1: -1);
-
-        int index=0;
-        pq.add(new Integer[]{0,start});
-
+        PriorityQueue<Node> pq=new PriorityQueue<>(Comparator.comparing(item->item.getCost()));
+        pq.add(new Node(0,start));
         while(pq.size()!=0){
-            Integer[] top = pq.poll();
-            int currentIndex=top[1];
-            int currentValue=top[0];
-            distance[currentIndex]=currentValue;
-            visited[currentIndex]=1;
-
-            for(int i=0;i<n;i++){
-                if(visited[i]==1){
-                    continue;
+            Node now=pq.poll();
+            int now_des=now.des;
+            int now_cost=now.cost;
+            if(visited[now_des]==1){
+                continue;
+            }
+            visited[now_des]=1;
+            for(Node next_node:arr.get(now_des)){
+                if(visited[next_node.des]==0 && distance[next_node.des]>now_cost+next_node.cost){
+                    pq.add(new Node(now_cost+next_node.cost,next_node.des));
+                    distance[next_node.des]=now_cost+next_node.cost;
                 }
-                if(arr[start][currentIndex]+arr[currentIndex][i]<arr[start][i]){
-                    
-                }
-                distance[currentIndex]=Math.min(arr[start][currentIndex]+arr[currentIndex][i],arr[start][i]);
-                pq.add(new Integer[]{arr[start][i],i});
             }
         }
-//        System.out.println("start = " + start);
-//        System.out.println("end = " + end);
-//        System.out.println("distance[end] = " + distance[end]);
         return distance[end];
     }
 }
