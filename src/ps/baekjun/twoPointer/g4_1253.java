@@ -1,4 +1,4 @@
-package ps.baekjun.binarySearch;
+package ps.baekjun.twoPointer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
