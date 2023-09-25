@@ -64,7 +64,9 @@ public class mazeRunner {
 
 
         for(int i=0;i<k;i++){
-            // System.out.println((i+1)+"초 경과");
+            System.out.println((i+1)+"초 경과 "+"현재 남은 사람 수"+man.size());
+            System.out.println("움직인 수" +answer);
+            System.out.println("출구 y " +(end[0]+1)+" x "+(end[1]+1));
             renewDistance(end[0],end[1]);
             // if(i==2){
             //     for(int []d :distance){
@@ -123,13 +125,12 @@ public class mazeRunner {
         while(!deq.isEmpty()){
             man.add(deq.pollFirst());
         }
-        // System.out.println("move done");
         // for(Node m: man){
         //     System.out.println("m.y "+m.y+" m.x "+m.x+" ");
 
         // }
-        // System.out.println(answer);
-        // System.out.println(end[0]+" "+end[1]);
+//         System.out.println(answer);
+//         System.out.println(end[0]+" "+end[1]);
         // System.out.println("move done");
 
     }
@@ -175,7 +176,7 @@ public class mazeRunner {
             }
         }
     }
-    public static List<Node> find(int ey,int ex){
+    public static List<Node> findOld(int ey,int ex){
         // System.out.println("find start");
         renewShortDistance(ey,ex);
         List<List<Node>> rec=new ArrayList<>();
@@ -189,15 +190,24 @@ public class mazeRunner {
                 List<Node> tList=new ArrayList<>();
                 tList.add(p);
                 tList.add(new Node(ey,ex,0));
+//                tList.sort((o1,o2)->{
+//                    if(o1.y==o2.y){
+//                        return o1.x-o2.x;
+//                    }
+//                    else{
+//                        return o1.y-o2.y;
+//                    }
+//                });
                 rec.add(tList);
+
             }
         }
         rec.sort((o1,o2)->{
-            if(o1.get(0).x==o2.get(0).x){
-                return o1.get(0).y-o2.get(0).y;
+            if(o1.get(0).y==o2.get(0).y){
+                return o1.get(0).x-o2.get(0).x;
             }
             else{
-                return o1.get(0).x-o2.get(0).x;
+                return o1.get(0).y-o2.get(0).y;
             }
         });
 
@@ -208,17 +218,11 @@ public class mazeRunner {
         // System.out.println(a.x);
         // System.out.println(b.y);
         // System.out.println(b.x);
+
         int top=0;
         int down=min;
         int left=0;
         int right=min;
-        while(true){
-            if(a.y>=top && a.y<=down && b.y>=top && b.y<=down){
-                break;
-            }
-            top++;
-            down++;
-        }
         while(true){
             if(a.x>=left && a.x<=right && b.x>=left && b.x<=right){
                 break;
@@ -226,12 +230,49 @@ public class mazeRunner {
             left++;
             right++;
         }
+        while(true){
+            if(a.y>=top && a.y<=down && b.y>=top && b.y<=down){
+                break;
+            }
+            top++;
+            down++;
+        }
+        System.out.println("a.y "+(a.y+1)+" a.x "+(a.x+1));
+
 
         List<Node> points=new ArrayList<>();
         points.add(new Node(top,left,0));
         points.add(new Node(down,right,0));
-        // System.out.println("find done");
+        System.out.println("y "+(top+1)+" x "+(left+1)+" size "+(min+1));
+//        System.out.println("y "+(down+1)+" x "+(right+1));
         return points;
+    }
+
+    public static List<Node> find(int ey,int ex){
+        renewShortDistance(ey,ex);
+        List<List<Node>> rec=new ArrayList<>();
+
+        int min=1000;
+        for(Node p:man){
+            min=Math.min(min,shortDistance[p.y][p.x]);
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(ey>=i && ey<=i+min && ex>=j && ex<=j+min){
+                    for(Node m:man){
+                        if(m.y>=i && m.y<=i+min && m.x>=j && m.x<=j+min){
+                            List<Node> points=new ArrayList<>();
+//                            System.out.println("좌상단 y "+(i+1)+" x "+(j+1)+" len "+(min+1));
+                            points.add(new Node(i,j,0));
+                            points.add(new Node(i+min,j+min,0));
+                            return points;
+                        }
+                    }
+                }
+            }
+        }
+        List<Node> poo=new ArrayList<>();
+        return poo;
     }
     public static void rotateWall(int ey,int ex){
         // System.out.println("rotate start");
@@ -242,7 +283,7 @@ public class mazeRunner {
         int right=points.get(1).x;
 
         for(Node m:man){
-            maze[m.y][m.x]=-1;
+            maze[m.y][m.x]--;
         }
         maze[ey][ex]=100;
 
