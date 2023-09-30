@@ -3,7 +3,7 @@ package ps.baekjun.graphSearch;
 import java.util.*;
 import java.io.*;
 
-public class g4_1520 {
+public class g3_1520 {
     public static class Node{
         int y;
         int x;

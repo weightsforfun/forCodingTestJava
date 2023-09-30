@@ -25,13 +25,11 @@ public class g3_1937 {
             }
         }
 
-        for(int i=0;i<n;i++){
-            Arrays.fill(dp[i],-1);
-        }
+
 
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
-                if(dp[i][j]==-1){
+                if(dp[i][j]==0){
                     dp[i][j]=dfs(i,j);
                 }
 
@@ -54,10 +52,10 @@ public class g3_1937 {
         System.out.println(answer);
     }
     public static int dfs(int y,int x){
-        if(dp[y][x]!=-1){
+        if(dp[y][x]!=0){
             return dp[y][x];
         }
-        dp[y][x]=0;
+        dp[y][x]=1;
         for(int i=0;i<4;i++){
             int ny=y+dy[i];
             int nx=x+dx[i];
@@ -65,7 +63,7 @@ public class g3_1937 {
                 dp[y][x]=Math.max(dp[y][x],(dfs(ny,nx)+1));
             }
         }
-        return dp[y][x]=Math.max(dp[y][x],1);
+        return dp[y][x];
     }
 
 }
